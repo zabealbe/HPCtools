@@ -54,13 +54,14 @@ class TritonRunner(Runner):
             key_filename: The path to the private key file to use for authentication.
         """
         super().__init__()
+        self.ssh_kwargs = ssh_kwargs
         self.ssh_client = u.MySSHClient(
-            **ssh_kwargs
+            **self.ssh_kwargs
         )
 
         self.context = []
         self.workdir = workdir
-        self.remote_experiment_dir = self.workdir + "/" + self.experiment_name
+        self.remote_experiment_dir = os.path.join(self.workdir, self.experiment_name)
 
         self.add_context(self.experiment_dir, self.remote_experiment_dir)
 

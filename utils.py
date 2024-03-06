@@ -2,41 +2,9 @@ import paramiko
 import os
 from paramiko.config import SSH_PORT
 from functools import reduce
+from uploaders import Uploader, SFTPUploader, RSYNCUploader
 
 ROOT = os.path.dirname(__file__)
-
-
-class MySFTPClient(paramiko.SFTPClient):
-    def put_dir(self, source, target):
-        """
-        Uploads the contents of the source directory to the target path. The
-        target directory needs to exists. All subdirectories in source are
-        created under target.
-        """
-        self.mkdir(target, ignore_existing=True)
-        for item in os.listdir(source):
-            if os.path.isfile(os.path.join(source, item)):
-                self.put(os.path.join(source, item), "%s/%s" % (target, item))
-            else:
-                self.mkdir("%s/%s" % (target, item), ignore_existing=True)
-                self.put_dir(os.path.join(source, item), "%s/%s" % (target, item))
-
-    def mkdir(self, path, mode=511, ignore_existing=False):
-        """Augments mkdir by adding an option to not fail if the folder exists"""
-        try:
-            super().mkdir(path, mode)
-        except IOError:
-            if ignore_existing:
-                pass
-            else:
-                raise
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *args):
-        self.close()
-
 
 class MySSHClient(paramiko.SSHClient):
     def __init__(
@@ -45,25 +13,38 @@ class MySSHClient(paramiko.SSHClient):
         ):
         super().__init__()
 
-        if "port" not in kwargs:
-            kwargs["port"] = SSH_PORT
+        self.username = kwargs["username"]
+        self.hostname = kwargs["hostname"]
+        self.port = kwargs.get("port", SSH_PORT)
+        self.key_filename = kwargs.get("key_filename", None)
 
-        if "key_filename" in kwargs:
-            kwargs["key_filename"] = os.path.expanduser(kwargs["key_filename"])
+        if self.key_filename is not None:
+            self.key_filename = os.path.expanduser(self.key_filename)
 
         self.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        self.connect = lambda: super(MySSHClient, self).connect(**kwargs)
 
     def connect(self):
-        pass
+        super().connect(
+            self.hostname,
+            self.port,
+            self.username,
+            key_filename=self.key_filename
+        )
 
-    def open_sftp(self):
-        return MySFTPClient.from_transport(self.get_transport())
-
-    def put_dir(self, source, target):
-        with self.open_sftp() as sftp:
-            sftp.put_dir(source, target)
-
+    def put_dir(self, source, target, uploader="rsync"):
+        if uploader == "sftp":
+            SFTPUploader.from_transport(
+                self.get_transport()
+            ).put_dir(source, target)
+        elif uploader == "rsync":
+            RSYNCUploader(
+                self.username,
+                self.hostname,
+                self.port,
+                self.key_filename
+            ).put_dir(source, target)
+        elif isinstance(uploader, Uploader):
+            uploader.put_dir(source, target)
 
 class GridConfig:
     def __init__(self, config: dict, config_names: list = None):
@@ -82,6 +63,8 @@ class GridConfig:
 
     def size(self):
         """Returns the number of configurations in the grid"""
+        if len(self.get_dimenstions()) == 0:
+            return 1
         return reduce(lambda x, y: x * y, self.get_dimenstions())
 
     def idx_to_dim_ids(self, idx):
