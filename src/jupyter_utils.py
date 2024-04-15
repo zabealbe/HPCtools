@@ -1,7 +1,6 @@
 import ipywidgets as widgets
 from IPython.display import display
 from threading import Timer
-from copy import deepcopy as copy
 
 class DynamicTableWidget:
     def __init__(self, title, rows_func, button_callback, button_text, button_style, refresh_interval):

@@ -2,49 +2,32 @@ import paramiko
 import os
 from paramiko.config import SSH_PORT
 from functools import reduce
-from uploaders import Uploader, SFTPUploader, RSYNCUploader
+from src.uploaders import Uploader, SFTPUploader, RSYNCUploader
+from src.auths import *
 
 ROOT = os.path.dirname(__file__)
 
 class MySSHClient(paramiko.SSHClient):
-    def __init__(
-            self,
-            **kwargs
-        ):
+    def __init__(self, auth: SSHAuth):
         super().__init__()
 
-        self.username = kwargs["username"]
-        self.hostname = kwargs["hostname"]
-        self.port = kwargs.get("port", SSH_PORT)
-        self.key_filename = kwargs.get("key_filename", None)
-
-        if self.key_filename is not None:
-            self.key_filename = os.path.expanduser(self.key_filename)
+        self.auth = auth
 
         self.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
     def connect(self):
-        super().connect(
-            self.hostname,
-            self.port,
-            self.username,
-            key_filename=self.key_filename
-        )
+        super().connect(**self.auth.to_paramiko())
 
-    def put_dir(self, source, target, uploader="rsync"):
+    def mkdir(self, path):
+        self.exec_command(f"mkdir -p {path}")
+
+    def put_dir(self, source, target, blacklist=[], uploader="rsync"):
         if uploader == "sftp":
-            SFTPUploader.from_transport(
-                self.get_transport()
-            ).put_dir(source, target)
+            SFTPUploader.from_transport(self.get_transport()).put_dir(source, target, blacklist)
         elif uploader == "rsync":
-            RSYNCUploader(
-                self.username,
-                self.hostname,
-                self.port,
-                self.key_filename
-            ).put_dir(source, target)
+            RSYNCUploader(self.auth).put_dir(source, target)
         elif isinstance(uploader, Uploader):
-            uploader.put_dir(source, target)
+            uploader.put_dir(source, target, blacklist)
 
 class GridConfig:
     def __init__(self, config: dict, config_names: list = None):
@@ -124,7 +107,7 @@ class GridConfig:
     def __len__(self):
         return self.size()
 
-def dict_to_args(dictionary, prefix="--", separator="=", join=" "):
+def dict_to_args(dictionary, prefix="--", separator=" ", join=" "):
     args = []
     for k, v in dictionary.items():
         if isinstance(v, bool):

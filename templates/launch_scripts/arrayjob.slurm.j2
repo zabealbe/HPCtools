@@ -5,6 +5,10 @@
 #SBATCH --array=0-{{ len(script_configs) - 1 }}
 #SBATCH --output=/dev/null
 
+PROJECT_NAME={{ project_name }}
+EXPERIMENT_NAME={{ experiment_name }}
+SUBEXPERIMENT_NAME={{ subexperiment_name }}
+
 CONFIG_NAMES=(
 {%- for config_name in script_config_names %}
     "{{ config_name }}"
@@ -12,7 +16,9 @@ CONFIG_NAMES=(
 )
 CONFIG_NAME={% raw %}${CONFIG_NAMES[$SLURM_ARRAY_TASK_ID]}{% endraw %}
 
-logdir=runs/{{ subexperiment_name }}/$CONFIG_NAME
+{{ run_before.strip() }}
+
+logdir=runs/$SUBEXPERIMENT_NAME/$CONFIG_NAME
 
 if [ -d "$logdir" ]; then
     suffix=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 5 | head -n 1)
@@ -26,15 +32,9 @@ logfile=$logdir/out.log
 echo "SLURM_JOB_ID: $SLURM_JOB_ID" >> $logfile
 echo "SLURM_ARRAY_TASK_ID: $SLURM_ARRAY_TASK_ID" >> $logfile
 
-export WANDB_PROJECT={{ wandb_project_name }}
-export WANDB_DIR=$logdir
-
 {{ env.strip() }}
 
-{{ run_before.strip() }}
-
-export WANDB_NAME={% raw %}${CONFIG_NAMES[$SLURM_ARRAY_TASK_ID]}{% endraw %}
-echo "WANDB_NAME: $WANDB_NAME" >> $logfile
+{{ run_before_task.strip() }}
 
 CONFIGS=(
 {%- for config in script_configs %}
@@ -47,4 +47,4 @@ echo "Running $COMMAND" >> $logfile
 
 eval $COMMAND &>> $logfile
 
-{{ run_after.strip() }}
+{{ run_after_task.strip() }}
