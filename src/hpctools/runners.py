@@ -1,6 +1,6 @@
 import os
-import utils as u
-import auths as a
+from . import utils as u
+from . import auths as a
 
 class LAUNCH_COMMANDS(type):
     def __class_getitem__(cls, key):
