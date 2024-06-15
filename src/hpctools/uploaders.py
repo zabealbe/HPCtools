@@ -2,7 +2,7 @@ import os
 import abc
 
 import paramiko
-import src.auths as a
+import auths as a
 
 class Uploader(abc.ABC):
     @abc.abstractmethod
