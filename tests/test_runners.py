@@ -1,6 +1,6 @@
 import pytest
 import os
-from runners import LAUNCH_COMMANDS, TEMPLATING_ENGINES  # Ensure this import statement is correct based on your project structure
+from hpctools.runners import LAUNCH_COMMANDS, TEMPLATING_ENGINES, Runner  # Ensure this import statement is correct based on your project structure
 
 def test_launch_commands():
     assert LAUNCH_COMMANDS['bash'] == "chmod +x {launch_script_filename} && ./{launch_script_filename}"
@@ -41,10 +41,6 @@ def test_failures():
     with pytest.raises(KeyError):
         _ = TEMPLATING_ENGINES['nonexistent']
 
-
-import pytest
-import os
-from runners import Runner  # Adjust the import based on your actual module path
 
 def test_runner_init_default():
     """

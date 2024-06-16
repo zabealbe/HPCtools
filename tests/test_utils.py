@@ -1,5 +1,5 @@
 import pytest
-from utils import MySSHClient, GridConfig, dict_to_args, SSHAuth
+from hpctools.utils import MySSHClient, GridConfig, dict_to_args, SSHAuth
 import paramiko
 
 # Mocking the necessary parts of paramiko for testing

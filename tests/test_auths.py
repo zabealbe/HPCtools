@@ -1,5 +1,5 @@
 import pytest
-from auths import SSHAuth
+from hpctools.auths import SSHAuth
 from unittest.mock import mock_open, patch
 import os
 
