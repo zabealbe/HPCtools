@@ -14,7 +14,7 @@ setup(
     package_dir={"": "src"},
     include_package_data=True,
     package_data={
-        'hpctools': ['../templates/launch_scripts/*.j2'],
+        'hpctools': ['templates/launch_scripts/*.j2'],
     },
     install_requires=[
         "paramiko",
