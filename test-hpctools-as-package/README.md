@@ -1,4 +1,4 @@
-Here are the steps to test hpctools as a installable package:
+Here are the steps to test hpctools as an installable package:
 
 1. Create a python virtual environment:
 
@@ -10,7 +10,7 @@ source ./myenv/bin/activate
 2. Install hpctools from git source:
 
 ```bash
-pip install paramiko
+pip install paramiko jinja2
 pip install git+https://github.com/YuTian8328/HPCtools.git@yu-dev
 ```
 
