@@ -2,8 +2,8 @@ import paramiko
 import os
 from paramiko.config import SSH_PORT
 from functools import reduce
-from src.uploaders import Uploader, SFTPUploader, RSYNCUploader
-from src.auths import *
+from .uploaders import Uploader, SFTPUploader, RSYNCUploader
+from .auths import *
 
 ROOT = os.path.dirname(__file__)
 

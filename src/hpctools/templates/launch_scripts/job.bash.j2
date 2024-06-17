@@ -1,0 +1,52 @@
+#!/bin/bash
+
+PROJECT_NAME={{ project_name }}
+EXPERIMENT_NAME={{ experiment_name }}
+SUBEXPERIMENT_NAME={{ subexperiment_name }}
+
+CONFIG_NAMES=(
+{%- for config_name in script_config_names %}
+    "{{ config_name }}"
+{%- endfor %}
+)
+
+{{ run_before.strip() }}
+
+for i in "${!CONFIG_NAMES[@]}"; do
+    echo "$i: ${CONFIG_NAMES[$i]}"
+
+    CONFIG_NAME=${CONFIG_NAMES[$i]}
+
+    logdir=runs/{{ subexperiment_name }}/$CONFIG_NAME
+
+    if [ -d "$logdir" ]; then
+        suffix=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 5 | head -n 1)
+        logdir=$logdir-$suffix
+    fi
+
+    mkdir -p $logdir
+
+    logfile=$logdir/out.log
+
+    {{ env.strip() }}
+
+    {{ run_before_task.strip() }}
+
+    export WANDB_NAME={% raw %}${CONFIG_NAMES[$SLURM_ARRAY_TASK_ID]}{% endraw %}
+    echo "WANDB_NAME: $WANDB_NAME" >> $logfile
+
+    CONFIGS=(
+    {%- for config in script_configs %}
+        "{{ repr(config)[1:-1] }}"
+    {%- endfor %}
+    )
+    COMMAND="{{ script }} {% raw %}${CONFIGS[$SLURM_ARRAY_TASK_ID]}{% endraw %}"
+
+    echo "Running $COMMAND" >> $logfile
+
+    eval $COMMAND &>> $logfile
+
+    {{ run_after_task.strip() }}
+done
+
+{{ run_after.strip() }}
