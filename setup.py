@@ -3,23 +3,19 @@ from setuptools import setup, find_packages
 setup(
     name="hpctools",
     version="0.1.0",
-    description="hpctools is a collection of tools for HPC systems",
+    description="A collection of magic tools for everyday high performance computing",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    author="Your Name",
-    author_email="your.email@example.com",
-    url="https://github.com/yourusername/hpctools",  # Change this to your repository URL
-    license="GNU General Public License v3 (GPLv3)",  # As per your classifier in pyproject.toml
+    author="zabealbe",
+    url="https://github.com/zabealbe/hpctools",
+    license="GNU General Public License v3 (GPLv3)",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     include_package_data=True,
     package_data={
-        'hpctools': ['templates/launch_scripts/*.j2'],
+        "hpctools": ["templates/launch_scripts/*.j2"],
     },
-    install_requires=[
-        "paramiko",
-        "jinja2"
-    ],
+    install_requires=["paramiko", "jinja2"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.8",
@@ -35,8 +31,7 @@ setup(
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Development Status :: 4 - Beta",
         "Environment :: Console",
-        "Environment :: Other Environment"
+        "Environment :: Other Environment",
     ],
     python_requires=">=3.8",
 )
-
