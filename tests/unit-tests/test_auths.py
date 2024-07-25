@@ -37,7 +37,3 @@ def test_to_paramiko_output():
         "password": "mypassword",
     }
     assert auth.to_paramiko() == expected
-
-# Run the tests
-if __name__ == "__main__":
-    pytest.main()

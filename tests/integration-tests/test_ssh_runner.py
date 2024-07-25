@@ -24,7 +24,6 @@ def test_ssh_runner(mock_resource_filename, mock_ssh_runner_run):
             "key_filename": "private/key/path",
         },
     )
-    # Access the template file path using the mocked resource_filename
     template_path = pkg_resources.resource_filename('hpctools', 'templates/launch_scripts/job.bash.j2')
 
     # Run the runner with the mocked template path

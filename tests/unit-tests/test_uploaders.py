@@ -3,7 +3,7 @@ from unittest.mock import patch, call
 import os
 from hpctools.uploaders import SFTPUploader
 from hpctools.auths import SSHAuth
-from hpctools.utils import MySSHClient  # Replace with actual import paths
+from hpctools.utils import MySSHClient  
 
 source = 'mock-source-folder'
 target = "/mywork/remote-mock-project"

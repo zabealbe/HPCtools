@@ -1,6 +1,6 @@
 import pytest
 import os
-from hpctools.runners import LAUNCH_COMMANDS, TEMPLATING_ENGINES, Runner  # Ensure this import statement is correct based on your project structure
+from hpctools.runners import LAUNCH_COMMANDS, TEMPLATING_ENGINES, Runner  
 
 def test_launch_commands():
     assert LAUNCH_COMMANDS['bash'] == "chmod +x {launch_script_filename} && ./{launch_script_filename}"
@@ -21,18 +21,6 @@ def test_templating_engines_j2(tmp_path):
     # Test the silent undefined
     rendered_undefined = TEMPLATING_ENGINES['j2'](str(p), {})
     assert rendered_undefined == "Hello !"
-
-# def test_silent_undefined():
-#     # Instantiate the SilentUndefined class and test its behavior
-#     from runners     import TEMPLATING_ENGINES
-#     undefined = TEMPLATING_ENGINES.SilentUndefined()
-    
-#     # Accessing an undefined attribute
-#     assert undefined.some_random_attribute == ""
-#     # Calling the undefined directly
-#     assert undefined("any", arg=123) == ""
-#     # Other operations
-#     assert (undefined + "test") == ""
 
 # Test for failure cases
 def test_failures():

@@ -25,8 +25,6 @@ def ssh_client():
 def uploader(ssh_client):
     return SFTPUploader.from_transport(ssh_client.get_transport())
 
-# uploader = SFTPUploader.from_transport(ssh_client.get_transport())
-
 # Test function for empty directory
 def test_empty_directory(uploader):
     with patch("os.listdir", return_value=[]):
