@@ -93,6 +93,7 @@ class SSHRunner(Runner):
                  workdir,
                  auth: a.SSHAuth=None,
                  auth_kwargs: dict={},
+                 **kwargs 
         ):
         """
         Initializes the experiment runner.
@@ -102,7 +103,7 @@ class SSHRunner(Runner):
             auth: The authentication method to use.
             auth_kwargs: The arguments to pass to the authentication method.
         """
-        super().__init__()
+        super().__init__(**kwargs)
         if auth:
             self.auth = auth
         elif auth_kwargs:

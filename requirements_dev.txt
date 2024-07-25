@@ -1,0 +1,5 @@
+flit
+paramiko
+jinja2
+pytest
+pytest-mock
