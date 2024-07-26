@@ -5,7 +5,6 @@ from functools import reduce
 from .uploaders import Uploader, SFTPUploader, RSYNCUploader
 from .auths import *
 
-ROOT = os.path.dirname(__file__)
 
 class MySSHClient(paramiko.SSHClient):
     def __init__(self, auth: SSHAuth):
@@ -23,11 +22,14 @@ class MySSHClient(paramiko.SSHClient):
 
     def put_dir(self, source, target, blacklist=[], uploader="rsync"):
         if uploader == "sftp":
-            SFTPUploader.from_transport(self.get_transport()).put_dir(source, target, blacklist)
+            SFTPUploader.from_transport(self.get_transport()).put_dir(
+                source, target, blacklist
+            )
         elif uploader == "rsync":
             RSYNCUploader(self.auth).put_dir(source, target)
         elif isinstance(uploader, Uploader):
             uploader.put_dir(source, target, blacklist)
+
 
 class GridConfig:
     def __init__(self, config: dict, config_names: list = None):
@@ -77,12 +79,12 @@ class GridConfig:
 
             else:
                 config[k] = v
-            
+
         if to_args:
             config = dict_to_args(config)
 
         return config
-    
+
     def flatten(self, **kwargs):
         """
         Returns a list of all possible configurations
@@ -107,17 +109,20 @@ class GridConfig:
     def __len__(self):
         return self.size()
 
+
 def dict_to_args(dictionary, prefix="--", separator=" ", join=" "):
     args = []
     for k, v in dictionary.items():
         if isinstance(v, bool):
-            if v:                # --foo
+            if v:  # --foo
                 args.append(f"{prefix}{k}")
-        elif isinstance(v, str): # --foo="bar"
+        elif isinstance(v, str):  # --foo="bar"
             if "'" in v or '"' in v:
-                raise ValueError(f"The string {v} contains quotes, which is not supported")
+                raise ValueError(
+                    f"The string {v} contains quotes, which is not supported"
+                )
             v = "'" + v + "'"
-            args.append(fr"{prefix}{k}{separator}{v}")
+            args.append(rf"{prefix}{k}{separator}{v}")
         elif isinstance(v, int):
             args.append(f"{prefix}{k}{separator}{v}")
         elif isinstance(v, float):
@@ -126,8 +131,10 @@ def dict_to_args(dictionary, prefix="--", separator=" ", join=" "):
             raise ValueError(f"Unsupported type {type(v)} for argument {k}")
     return join.join(args)
 
+
 def dict_to_slurm_args(dictionary):
     return dict_to_args(dictionary, prefix="#SBATCH --", separator="=", join="\n")
+
 
 def flatten_names(names, join="_"):
     dims = []
@@ -139,7 +146,7 @@ def flatten_names(names, join="_"):
             size *= dim_size
         else:
             dims.append(1)
-    
+
     flattened_names = []
     for i in range(size):
         dim_ids = []
@@ -152,7 +159,7 @@ def flatten_names(names, join="_"):
                 flattened_names[-1].append(dim[dim_ids[-1]])
             else:
                 flattened_names[-1].append(dim)
-        
+
         flattened_names[-1] = join.join(flattened_names[-1])
 
     return flattened_names
