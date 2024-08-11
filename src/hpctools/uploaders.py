@@ -41,7 +41,7 @@ class SFTPUploader(Uploader, paramiko.SFTPClient):
                     self.put(item_path, os.path.join(target, item))
             else:
                 self.mkdir(item_path, ignore_existing=True)
-                self.put_dir(item_path, os.path.join(target, item))
+                self.upload(item_path, os.path.join(target, item))
 
     def mkdir(self, path, mode=511, ignore_existing=False):
         """Augments mkdir by adding an option to not fail if the folder exists"""

@@ -5,7 +5,7 @@ import os
 
 
 def test_ssh_auth_initialization():
-    auth = SSHAuth("user", "host")
+    auth = SSHAuth(username="user", hostname="host")
     assert auth.username == "user"
     assert auth.hostname == "host"
     assert auth.port == 22
@@ -20,21 +20,27 @@ def test_ssh_auth_with_password():
 
 
 def test_ssh_auth_with_key_filename():
-    auth = SSHAuth("user", "host", key_filename="~/.ssh/id_rsa")
+    auth = SSHAuth(username="user", hostname="host", key_filename="~/.ssh/id_rsa")
     assert auth.key_filename == os.path.expanduser("~/.ssh/id_rsa")
 
 
 def test_ssh_auth_with_password_filename():
     mock_file_content = "secret"
     with patch("builtins.open", mock_open(read_data=mock_file_content)) as mock_file:
-        auth = SSHAuth("user", "host", password_filename="~/secret.txt")
-        mock_file.assert_called_once_with(os.path.expanduser("~/secret.txt"))
+        auth = SSHAuth(
+            username="user", hostname="host", password_filename="~/secret.txt"
+        )
+        mock_file.assert_called_once_with(os.path.expanduser("~/secret.txt"), "r")
         assert auth.password == "secret"
 
 
 def test_to_paramiko_output():
     auth = SSHAuth(
-        "user", "host", port=2222, key_filename="~/.ssh/id_rsa", password="mypassword"
+        username="user",
+        hostname="host",
+        port=2222,
+        key_filename="~/.ssh/id_rsa",
+        password="mypassword",
     )
     expected = {
         "hostname": "host",
