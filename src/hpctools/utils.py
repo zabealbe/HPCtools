@@ -6,6 +6,16 @@ from .uploaders import Uploader, SFTPUploader, RSYNCUploader
 from .auths import *
 
 
+class dotdict(dict):
+    """
+    Dot notation access to dictionary attributes
+    """
+
+    __getattr__ = dict.get
+    __setattr__ = dict.__setitem__
+    __delattr__ = dict.__delitem__
+
+
 class MySSHClient(paramiko.SSHClient):
     def __init__(self, auth: SSHAuth):
         super().__init__()
