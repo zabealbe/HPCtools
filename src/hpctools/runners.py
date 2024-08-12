@@ -162,7 +162,7 @@ class Runner:
         Returns:
             A `dotdict` object containing the job attributes.
         """
-        self.before_run()
+        self.run_before()
 
         _, launch_file_ext, template_ext = template.rsplit(".", 2)
 
