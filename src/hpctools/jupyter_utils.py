@@ -110,7 +110,7 @@ class SlurmQueueWidget(DynamicTableWidget):
             "Slurm Queue", self.get_slurm_queue, self.on_click, "Kill", "danger", 1
         )
         self.runner = runner
-        self.job_name
+        self.job_name = job_name
 
     def get_slurm_queue(self):
         stdout, _, _ = self.runner.exec(f"squeue -n {self.job_name}")
