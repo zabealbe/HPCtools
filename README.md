@@ -2,33 +2,25 @@
     <h1> :wrench: HPC Tools </h1>
 </div>
 
-This repository contains a collection of useful tools and scripts for HPC users, they are designed to be simple and easily integrated into existing workflows.
+Created by HPC users, for HPC users, to simplify and organize your workflows. Run parallel jobs, sweep configurations, and deploy in any environment with ease.
+
+## *Currently Supported Environments
+- Local Environment
+- Slurm
+
+To support more environments it is as easy as creating a new [launch script template](templates/launch_scripts), check [TUTORIAL.md](TUTORIAL.md) for an introduction.
 
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-### Prerequisites
+### Installation
 
 This project currently only supports Linux-based systems, and requires the following software to be installed:
 
 -   Python 3.10+
 -   OpenSSH
 -   Rsync
-
-OpenSSH and Rsync are typically installed by default on most Linux distributions, to verify, run the following commands:
-
-```bash
-$ ssh -V
-OpenSSH_9.6p1, OpenSSL 3.2.1 30 Jan 2024
-```
-
-```bash
-$ rsync --version
-rsync  version 3.2.7  protocol version 31
-```
-
-### Installation
 
 You can install this project as a pypi package with the following command:
 
